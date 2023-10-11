@@ -6,6 +6,7 @@ def print_matrix(matrix):
     for row in matrix:
         print(''.join(row))
 
+data_str = input("Enter your data here:\n")
 
 size = int(input())
 
