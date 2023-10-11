@@ -1,0 +1,75 @@
+def is_valid_position(r, c, size):
+    return 0 <= r < size and 0 <= c < size
+
+
+def print_matrix(matrix):
+    for row in matrix:
+        print(''.join(row))
+
+data_str = input("Enter your data here:\n")
+
+size = int(input())
+
+if not (4 <= size <= 10):
+    print("Invalid matrix size. Please provide a size between 4 and 10.")
+    exit()
+
+cruisers = 3
+bombs_hit = 0
+
+matrix = []
+submarine_pos = None
+
+directions = {
+    "up": (-1, 0),
+    "down": (1, 0),
+    "left": (0, -1),
+    "right": (0, 1)
+}
+
+# Read and validate the matrix
+for row in range(size):
+    line = input()
+    if len(line) != size:
+        print(f"Invalid row length. Please provide {size} characters per row.")
+        exit()
+
+    if "S" in line:
+        if submarine_pos is not None:
+            print("Invalid submarine position. There should be only one 'S'.")
+            exit()
+        submarine_pos = [row, line.index("S")]
+        matrix.append(list(line.replace("S", "-")))
+    else:
+        matrix.append(list(line))
+
+if submarine_pos is None:
+    print("Submarine 'S' is missing. Please provide a valid submarine position.")
+    exit()
+
+while cruisers:
+    direction = input()
+
+    r = directions[direction][0] + submarine_pos[0]
+    c = directions[direction][1] + submarine_pos[1]
+
+    if not is_valid_position(r, c, size):
+        print("Submarine moved out of the matrix. Game over!")
+        exit()
+
+    submarine_pos = [r, c]
+
+    if matrix[r][c] == "C":
+        cruisers -= 1
+    elif matrix[r][c] == "*":
+        bombs_hit += 1
+
+        if bombs_hit == 3:
+            print(f"Mission failed, U-9 disappeared! Last known coordinates [{r}, {c}]!")
+            exit()
+
+    matrix[r][c] = "-"
+
+print(f"Mission accomplished, U-9 has destroyed three key cruisers of the enemy!")
+matrix[submarine_pos[0]][submarine_pos[1]] = "S"
+print_matrix(matrix)
